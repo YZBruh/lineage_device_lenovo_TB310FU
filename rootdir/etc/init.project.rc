@@ -1,0 +1,83 @@
+# MTK project .rc configure
+
+on init
+    mkdir /mnt/media_rw/usbotg 0700 media_rw media_rw
+    mkdir /storage/usbotg 0700 root root
+
+    chmod 0444 proc/sd_tray_gpio_value
+
+on post-fs-data
+
+#Camera
+    chmod 0660 /dev/MAINAF
+    chown system camera /dev/MAINAF
+
+    chmod 0660 /dev/MAINAF2
+    chown system camera /dev/MAINAF2
+
+    chmod 0660 /dev/SUBAF
+    chown system camera /dev/SUBAF
+
+    chmod 0660 /dev/GAF001AF
+    chown system camera /dev/GAF001AF
+
+    chmod 0660 /dev/DW9714AF
+    chown system camera /dev/DW9714AF
+
+    chmod 0660 /dev/LC898212AF
+    chown system camera /dev/LC898212AF
+
+    chmod 0660 /dev/BU64745GWZAF
+    chown system camera /dev/BU64745GWZAF
+
+#SMB
+    chown system system /proc/smb/ScreenComm
+    chmod 0660 /proc/smb/ScreenComm
+
+    chmod 0660 /dev/spm
+    chown system system /dev/spm
+
+#hwx add cali for bring up
+    chmod 0777 /sys/bus/i2c/drivers/aw883xx_smartpa/6-0034/cali_re
+    chmod 0777 /sys/bus/i2c/drivers/aw883xx_smartpa/6-0034/cali_f0
+    chmod 0777 /sys/bus/i2c/drivers/aw883xx_smartpa/6-0034/monitor
+    chmod 0777 /sys/bus/i2c/drivers/aw883xx_smartpa/6-0034/dsp_re
+    chmod 0777 /sys/bus/i2c/drivers/aw883xx_smartpa/6-0035/cali_re
+    chmod 0777 /sys/bus/i2c/drivers/aw883xx_smartpa/6-0035/cali_f0
+    chmod 0777 /sys/bus/i2c/drivers/aw883xx_smartpa/6-0035/monitor
+    chmod 0777 /sys/bus/i2c/drivers/aw883xx_smartpa/6-0035/dsp_re
+    chmod 0777 /dev/aw_smartpa
+    chmod 0777 /venodr/bin/aw_cali
+    chmod 0664 /mnt/vendor/nvcfg/aw_cali.bin
+    chown system system /mnt/vendor/aw_cali.bin
+
+#lwc add tp selftest 
+    chmod 0646 sys/bus/spi/devices/spi2.0/fts_test
+
+#hrq modify Sar aot_cali permission
+	chmod 0666 sys/devices/platform/1100f000.i2c3/i2c-3/3-0012/aot_cali
+
+# add by hao.zhang for PINE-1371 Date:20220913
+    chmod 0666 /sys/bus/spi/devices/spi2.0/panel_direction
+    chmod 0666 /sys/bus/spi/devices/spi2.0/game_mode
+
+on init
+    # Refer to http://source.android.com/devices/tech/storage/index.html
+    # It said, "Starting in Android 4.4, multiple external storage devices are surfaced to developers through
+    #           Context.getExternalFilesDirs(), Context.getExternalCacheDirs(), and Context.getObbDirs().
+    #           External storage devices surfaced through these APIs must be a semi-permanent part of the device (such as an SD card slot in a battery compartment).
+    #           Developers expect data stored in these locations to be available over long periods of time."
+    # Therefore, if the target doesn't support sd hot-plugging (Ex: the SD card slot in a battery compartment), we need to export SECONDARY_STORAGE in 'boot' section
+    #
+    # export SECONDARY_STORAGE /storage/sdcard1
+
+service fuse_usbotg /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/usbotg /storage/usbotg
+    class late_start
+    disabled
+
+# add by hao.zhang for PINE-1371 Date:20220913
+on property:persist.sys.game_mode=*
+    write /sys/bus/spi/devices/spi2.0/game_mode ${persist.sys.game_mode}
+
+on property:persist.sys.panel_direction=*
+    write /sys/bus/spi/devices/spi2.0/panel_direction ${persist.sys.panel_direction}

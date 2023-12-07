@@ -1,0 +1,12 @@
+ro.config.alarm_alert=Cesium.ogg
+ro.config.notification_sound=Pollux.ogg
+ro.odm.lenovo.camerainfo=2+8
+ro.odm.lenovo.device=tablet
+ro.odm.lenovo.feature.dolbyfourchannel.support=true
+ro.odm.lenovo.feature.smarthorizontalscreen.support=true
+ro.odm.lenovo.lcdsize=8.95
+ro.odm.lenovo.operator=open
+ro.odm.lenovo.platform=MTK
+ro.odm.lenovo.region=row
+ro.odm.lenovo.tablet=wifi
+ro.odm.lenovo.wificert=no
